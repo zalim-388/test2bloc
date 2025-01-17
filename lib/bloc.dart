@@ -1,17 +1,41 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class incrementCounter extends Cubit<int> {
-  incrementCounter() : super(0);
-void Increment()=> emit(state +1);
-void decrement()=> emit(state -1);
+class Counterstate {
+  final String name;
+  final String age;
+  final String place;
 
+  Counterstate({
+    required this.name,
+    required this.age,
+    required this.place,
+  });
 
+  Counterstate copyWith({String? name, String? age, String? place}) {
+    return Counterstate(
+      name: name ?? this.name,
+      age: age ?? this.age,
+      place: place ?? this.place,
+    );
+  }
 }
 
-class counter extends  BlocObserver{
+class Counter extends Cubit<Counterstate> {
+  Counter() : super(Counterstate(name: '', age: '', place: ''));
 
-void onChange(BlocBase bloc, Change change) {
-super.onChange(bloc, change);
-print('${change.runtimeType}$change');
+  void changeName(String name) {
+    emit(state.copyWith(name: name));
+  }
+
+  void changeAge(String age) {
+    emit(state.copyWith(age: age));
+  }
+
+  void changePlace(String place) {
+    emit(state.copyWith(place: place));
+  }
 }
-}
+
+
+
+
