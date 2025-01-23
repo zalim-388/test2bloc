@@ -17,14 +17,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController placeController = TextEditingController();
 
   @override
-  void dispose() {
-    nameController.dispose();
-    ageController.dispose();
-    placeController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -33,8 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Name: ${state.name}',
-                    style: const TextStyle(color: Colors.red)),
+                Text('Name:${state.name}'),
                 Text('Age: ${state.age}'),
                 Text('Place: ${state.place}'),
               ],
@@ -59,7 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   TextField(
                     controller: nameController,
-                    textCapitalization: TextCapitalization.words,
                     decoration: const InputDecoration(
                       hintText: 'Name',
                       border: UnderlineInputBorder(),
@@ -104,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final place = placeController.text;
 
     context.read<Counter>()
-      ..changeAge(name)
+      ..changeName(name)
       ..changeAge(age)
       ..changePlace(place);
 

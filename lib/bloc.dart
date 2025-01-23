@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Counterstate {
   final String name;
@@ -21,21 +22,40 @@ class Counterstate {
 }
 
 class Counter extends Cubit<Counterstate> {
-  Counter() : super(Counterstate(name: '', age: '', place: ''));
-
-  void changeName(String name) {
-    emit(state.copyWith(name: name));
+  Counter() : super(Counterstate(name: '', age: '', place: '')) {
+    loadState();
   }
 
-  void changeAge(String age) {
-    emit(state.copyWith(age: age));
+  Future<void> loadState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('name') ?? '';
+    final age = prefs.getString('age') ?? '';
+    final place = prefs.getString('place') ?? '';
+    emit(Counterstate(name: name, age: age, place: place));
   }
 
-  void changePlace(String place) {
-    emit(state.copyWith(place: place));
+  Future<void> changeName(String name) async {
+    final updatedState = state.copyWith(name: name);
+    emit(updatedState);
+    await _saveToPrefs(updatedState);
+  }
+
+  Future<void> changeAge(String age) async {
+    final updatedState = state.copyWith(age: age);
+    emit(updatedState);
+    await _saveToPrefs(updatedState);
+  }
+
+  Future<void> changePlace(String place) async {
+    final updatedState = state.copyWith(place: place);
+    emit(updatedState);
+    await _saveToPrefs(updatedState);
+  }
+
+  Future<void> _saveToPrefs(Counterstate state) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('name', state.name);
+    await prefs.setString('age', state.age);
+    await prefs.setString('place', state.place);
   }
 }
-
-
-
-
