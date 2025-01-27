@@ -30,9 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: 250,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Colors.grey,
-                    ),
+                    border: Border.all(color: Colors.grey),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -40,98 +38,108 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         Row(
                           children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text('Name:${state.name}'),
-                            ),
-                            Spacer(),
+                            Text('Name: ${state.name}'),
+                            const Spacer(),
                             IconButton(
-                                onPressed: () => openDialog(context,
-                                    field: 'name', value: state.name),
-                                icon: Icon(
-                                  Icons.edit_outlined,
-                                  size: 16,
-                                )),
+                              onPressed: () => openDialog(
+                                context,
+                                field: 'name',
+                                value: state.name,
+                              ),
+                              icon: const Icon(Icons.edit_outlined, size: 16),
+                            ),
                           ],
                         ),
-                        Divider(),
+                        const Divider(),
                         Row(
                           children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text('Age: ${state.age}'),
-                            ),
-                            Spacer(),
+                            Text('Age: ${state.age}'),
+                            const Spacer(),
                             IconButton(
-                                onPressed: () => openDialog(context,
-                                    field: 'Name', value: state.age),
-                                icon: Icon(
-                                  Icons.edit_outlined,
-                                  size: 16,
-                                ))
+                              onPressed: () => openDialog(
+                                context,
+                                field: 'age',
+                                value: state.age,
+                              ),
+                              icon: const Icon(Icons.edit_outlined, size: 16),
+                            ),
                           ],
                         ),
-                        Divider(),
+                        const Divider(),
                         Row(
                           children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text('Place: ${state.place}'),
-                            ),
-                            Spacer(),
+                            Text('Place: ${state.place}'),
+                            const Spacer(),
                             IconButton(
-                                onPressed: () => openDialog(context,
-                                    field: 'place', value: state.place),
-                                icon: Icon(
-                                  Icons.edit_outlined,
-                                  size: 16,
-                                ))
+                              onPressed: () => openDialog(
+                                context,
+                                field: 'place',
+                                value: state.place,
+                              ),
+                              icon: const Icon(Icons.edit_outlined, size: 16),
+                            ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             );
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => openDialog(context, field: '', value: ''),
+        onPressed: () {
+          nameController.clear();
+          ageController.clear();
+          placeController.clear();
+          openDialog(context, field: 'add', value: '');
+        },
         child: const Icon(Icons.add),
       ),
     );
   }
 
   Future<void> openDialog(BuildContext context,
-      {required String? field, required value}) async {
-    if (field == 'name') {
-      nameController.text = value;
-  
-    } if  (field == 'age') {
-      ageController.text = value;
-     
-     
-    } if (field == 'place') {
-      placeController.text = value;
-   
-    } else {
-     
-    }
-    void submit(BuildContext context, {String? field, required dynamic value}) {
+      {required String field, required dynamic value}) async {
+    if (field != 'add') {
       switch (field) {
         case 'name':
-          context.read<Counter>().changeName(value);
+          nameController.text = value;
           break;
         case 'age':
-          context.read<Counter>().changeAge(value);
+          ageController.text = value.toString();
           break;
         case 'place':
-          context.read<Counter>().changePlace(value);
+          placeController.text = value;
           break;
         default:
           break;
+      }
+    }
+
+    void submit(BuildContext context, {required String field}) {
+      if (field == 'add') {
+        // For adding new data (default behavior if no specific field is passed)
+        context.read<Counter>().changeName(nameController.text.trim());
+        context.read<Counter>().changeAge(ageController.text.trim());
+        context.read<Counter>().changePlace(placeController.text.trim());
+      } else {
+        // For updating specific fields
+        switch (field) {
+          case 'name':
+            context.read<Counter>().changeName(nameController.text.trim());
+            break;
+          case 'age':
+            context.read<Counter>().changeAge(ageController.text.trim());
+            break;
+          case 'place':
+            context.read<Counter>().changePlace(placeController.text.trim());
+            break;
+          default:
+            break;
+        }
       }
       Navigator.of(context).pop();
     }
@@ -151,7 +159,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     border: UnderlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 20),
                 TextField(
                   controller: ageController,
                   keyboardType: TextInputType.number,
@@ -161,7 +168,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     border: UnderlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 20),
                 TextField(
                   controller: placeController,
                   decoration: const InputDecoration(
@@ -174,14 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      final value = field == 'name'
-                          ? nameController.text.trim()
-                          : field == 'age'
-                              ? ageController.text.trim()
-                              : placeController.text.trim();
-                      (context, field: field, value: '');
-                            submit(context, field: field, value: value);
-                    
+                      submit(context, field: field);
                     },
                     child: const Text('Submit'),
                   ),
@@ -194,3 +193,101 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+  Future<void> openDialog(BuildContext context, void clear,
+dynamic nameController, dynamic ageController, dynamic placeController,       {required String field, required dynamic value}) async {
+    if (field != 'add') {
+      switch (field) {
+        case 'name':
+          nameController.text = value;
+          break;
+        case 'age':
+          ageController.text = value.toString();
+          break;
+        case 'place':
+          placeController.text = value;
+          break;
+        default:
+          break;
+      }
+    }
+
+    void submit(
+      BuildContext context, {
+      required String field,
+    }) {
+      if (field == 'add') {
+        context.read<Counter>().changeName(nameController.text.trim());
+        context.read<Counter>().changeAge(ageController.text.trim());
+        context.read<Counter>().changePlace(placeController.text.trim());
+      } else {
+        switch (field) {
+          case 'name':
+            context.read<Counter>().changeName(nameController.text.trim());
+            break;
+          case 'age':
+            context.read<Counter>().changeAge(ageController.text.trim());
+            break;
+          case 'place':
+            context.read<Counter>().changePlace(placeController.text.trim());
+            break;
+          default:
+            break;
+        }
+      }
+      Navigator.of(context).pop();
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Name',
+                    border: UnderlineInputBorder(),
+                  ),
+                ),
+                TextField(
+                  controller: ageController,
+                  keyboardType: TextInputType.number,
+                  maxLength: 2,
+                  decoration: const InputDecoration(
+                    hintText: 'Age',
+                    border: UnderlineInputBorder(),
+                  ),
+                ),
+                TextField(
+                  controller: placeController,
+                  decoration: const InputDecoration(
+                    hintText: 'Place',
+                    border: UnderlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      submit(
+                        context,
+                        field: field,
+                      );
+                    },
+                    child: const Text('Submit'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
